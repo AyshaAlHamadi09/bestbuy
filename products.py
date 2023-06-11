@@ -1,5 +1,8 @@
+from abc import ABC, abstractmethod
+
+
 class Product:
-    def __init__(self, name, price, quantity):
+    def __init__(self, name, price, quantity, promo= None):
         self.name = name
         if self.name.isspace() or len(self.name) == 0:
             raise ValueError("name cannot be empty")
@@ -7,10 +10,18 @@ class Product:
         if self.price < 0:
             raise ValueError("price cannot be negative")
         self.quantity = quantity
+        self.promo = promo
         self.active = True
         if self.quantity <= 0:
             self.quantity = 0
             self.active = False
+
+
+    def get_promo(self):
+        return self.promo
+
+    def set_promo(self, promotion):
+        self.promo = promotion
 
     def get_quantity(self):
         return self.quantity
@@ -30,17 +41,65 @@ class Product:
         self.active = False
 
     def show(self):
-        print(f"{self.name}, Price: {self.price}, Quantity: {self.quantity}")
+        print(f"{self.name}, Price: {self.price}, Quantity: {self.quantity}, Promotion: {self.promo}")
 
-    def buy(self, quantity):
+    def buy(self, quantity, promo= None):
+
         try:
             if self.quantity < quantity or self.quantity < 1:
                 raise ValueError(f"Available stock ({self.quantity}) is not enough for this purchase.")
             self.quantity -= quantity
-            total_price = quantity * self.price 
+            total_price = quantity * self.price
             return total_price
         except ValueError as e:
             print(e)
+
+
+class NonStockedProduct(Product):
+    def __init__(self, name, price):
+        super().__init__(name, price, 0)
+
+class LimitedProduct(Product):
+    def __init__(self, name, price, quantity, max_order):
+        super().__init__(name, price, quantity)
+        self.max_order = max_order
+
+
+
+class Promotion(ABC):
+    @abstractmethod
+    def apply_promotion(self, product, order_quantity):
+        pass
+
+class PercentageDiscount(Promotion):
+    def apply_promotion(self, product, order_quantity, percentage):
+        discount = product.price * (percentage / 100)
+        new_price = product.price - discount
+        total = new_price * order_quantity
+        return total
+
+class SecondAtHalfPrice(Promotion):
+    def apply_promotion(self, product, order_quantity):
+        if order_quantity > 2:
+            discount_quantity = order_quantity // 2
+            full_price_quantity = order_quantity - discount_quantity
+            discounted_price = (product.price / 2) * discount_quantity
+            full_price = product.price * full_price_quantity
+            new_price = discounted_price + full_price
+            return new_price
+
+
+class BuyOneGetOneFree(Promotion):
+    def apply_promotion(self, product, order_quantity):
+        if order_quantity > 2:
+            free_quantity = order_quantity // 2
+            full_price_quantity = order_quantity - free_quantity
+            new_price = product.price * full_price_quantity
+            return new_price
+
+
+
+
 
 
 def main():

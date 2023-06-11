@@ -1,6 +1,5 @@
 import products
 import store
-import main
 
 
 def test_normal_product():
@@ -67,14 +66,6 @@ def test_order_more_than_available_stock():
 
 
 
-    f"""def order(self, shopping_list):
-        total_price = 0
-        self.shopping_list = shopping_list
-        for product, order_quantity in shopping_list:
-            total_price += (product.price * order_quantity)
-            remaining_quantity = product.quantity - order_quantity
-            product.set_quantity(remaining_quantity)
-        return f"total price is total_price dollars\nremaining quantity in store is remaining_quantity"""""
 
 
 
