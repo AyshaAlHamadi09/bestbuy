@@ -11,6 +11,16 @@ product_list = [ products.Product("MacBook Air M2", price=1450, quantity=100),
 
 best_buy = store.Store(product_list)
 
+# Create promotion catalog
+second_half_price = products.SecondHalfPrice("Second Half price!")
+third_one_free = products.ThirdOneFree("Third One Free!")
+thirty_percent = products.PercentDiscount("30% off!", percentage=30)
+
+# Add promotions to products
+product_list[0].set_promo(second_half_price)
+product_list[1].set_promo(third_one_free)
+product_list[3].set_promo(thirty_percent)
+
 
 def start(store_object):
     user_input = input("""1. List all products in store
@@ -22,7 +32,11 @@ def start(store_object):
 
     if user_input == "1":
         for index, item in enumerate(product_list):
-            print(f"{index + 1}. {item.name} \n")
+            if item.promo is None:
+                print(f"{index + 1}. {item.name}, promotion: {item.promo} \n")
+            else:
+                print(f"{index + 1}. {item.name}, promotion: {item.promo.name} \n")
+
 
 
     if user_input == "2":
