@@ -20,7 +20,7 @@ class Store:
         count = 0
         for item in self.list_of_products:
             count += item.quantity
-        return f"total number of items in store: {count} items"
+        return f"total number of remaining items in store: {count} items"
 
 
     def get_all_products(self):
@@ -32,12 +32,18 @@ class Store:
 
     def order(self, shopping_list):
         total_price = 0
+        store_items = [] #will put product objects in this list so I can then input the list into a store object
         self.shopping_list = shopping_list
         for product, order_quantity in shopping_list:
+            if order_quantity > product.quantity:
+                raise ValueError("not enough in stock")
+            store_items.append(product)
             total_price += (product.price * order_quantity)
-            remaining_quantity = product.quantity - order_quantity
-            product.set_quantity(remaining_quantity)
-        return f"total price is {total_price} dollars\nremaining quantity in store is {remaining_quantity}"
+            product.quantity -= order_quantity
+            product.set_quantity(product.quantity)
+        store_obj = Store(store_items)  # creating a store object with the product objects list so I can then use the function get_total_quantity
+        remaining_quantity = store_obj.get_total_quantity()
+        return f"total price is {total_price} dollars\n{remaining_quantity}"
 
 
 def main():

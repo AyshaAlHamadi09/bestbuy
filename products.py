@@ -1,10 +1,15 @@
 class Product:
     def __init__(self, name, price, quantity):
         self.name = name
+        if self.name.isspace() or len(self.name) == 0:
+            raise ValueError("name cannot be empty")
         self.price = price
+        if self.price < 0:
+            raise ValueError("price cannot be negative")
         self.quantity = quantity
         self.active = True
         if self.quantity <= 0:
+            self.quantity = 0
             self.active = False
 
     def get_quantity(self):
